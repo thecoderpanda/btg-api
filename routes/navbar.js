@@ -114,4 +114,74 @@ router.put('/update/menu/:id', verifyToken, async (req, res, next) => {
 })
 
 
+
+const { indusrtySolutionForSchema } = require('../modals/SubNav')
+const { solutionMainCategorySchema } = require('../modals/SubNav')
+const { solutionSubCategorySchema } = require('../modals/SubNav')
+const { productMainCategorySchema } = require('../modals/SubNav')
+router.get('/subnav', async (req, res, next) => {
+    let data = [];
+    let main = await indusrtySolutionForSchema.find()
+
+    data.push(main)
+    main.map(async (item, index) =>{
+        // main[index].push('a')
+        console.log(main[index])
+    })
+        
+
+    await Promise.all(main.map(async (item) => {
+        const sub_main = await solutionMainCategorySchema.find({ parentId: ObjectID(item._id) })
+        // console.log(d)
+        main.push(sub_main)
+
+        await Promise.all(sub_main.map(async item1 => {
+            const sub_sub_main = await solutionSubCategorySchema.find({ parentId: ObjectID(item1._id) })
+            
+            sub_main.push(sub_sub_main)
+
+            await Promise.all(sub_sub_main.map(async item2 => {
+                const sub_sub_sub_main = await productMainCategorySchema.find({ parentId: ObjectID(item2._id) })
+                // sub_sub_main.push({productMainCategoryName : item2.name, data: sub_sub_sub_main})
+                sub_sub_main.push(sub_sub_sub_main)
+            } ))
+        }))
+    }))
+
+    res.send(data)
+})
+
+
 module.exports = router;
+
+/*
+    collection: industry_solution_for
+    {
+        _id: 608fc90b85911ef127dcd11e
+        name: Pulp
+        _v: 0
+    }
+
+    collection: solution_main_category
+    {
+        _id: 608fc95785911ef127dcd11f
+        name:
+        parentId: industry_solution_for._id
+    }
+
+    collection: solution_sub_category
+    {
+        _id: 608fc9c485911ef127dcd120
+        name:
+        parentId: main_category._id
+    }
+
+    collection: product_main_category
+    {
+        _id:
+        name:
+        parentId: solution_sub_category._id
+    }
+*/
+
+
