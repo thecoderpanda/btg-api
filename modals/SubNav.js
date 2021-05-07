@@ -4,10 +4,7 @@ const indusrtySolutionForSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    parentId: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true,
-    }
+
 }, { collection: "industry_solution_for" }
 );
 

@@ -20,7 +20,23 @@ const adminLogin = (data) => {
     return Joi.validate(data, user);
 }
 
+const mainNav = (data) => {
+    const main = {
+        name: Joi.string().required()
+    }
+    return Joi.validate(data, main);
+}
+
+const subNavCat = (data) => {
+    const main = {
+        name: Joi.string().required()
+    }
+    return Joi.validate(data, main);
+}
+
 module.exports = {
     adminRegister,
-    adminLogin
+    adminLogin,
+    mainNav,
+    subNavCat
 }

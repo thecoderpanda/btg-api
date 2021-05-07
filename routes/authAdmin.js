@@ -15,7 +15,7 @@ router.post('/register', async(req, res, next) => {
 
     // Validate Input Body
     const { error } = adminRegister(req.body);
-    if (error) return res.status(200).json({ status: false, messgae: error.details[0].message });
+    if (error) return res.status(200).json({ status: false, message: error.details[0].message });
 
     // Check if Email/Mobile already exists
     
@@ -51,7 +51,7 @@ router.post('/login', async(req, res, next) => {
 
     // Validate Input Body
     const { error } = adminLogin(req.body);
-    if (error) return res.status(200).json({ status: false, messgae: error.details[0].message });
+    if (error) return res.status(200).json({ status: false, message: error.details[0].message });
 
     // Check if email exists
     const emailExists = await Admin.findOne({ email : req.body.email })

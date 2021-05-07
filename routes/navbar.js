@@ -3,6 +3,12 @@ const Navbar = require('../modals/Navbar');
 const SubMenu = require('../modals/SubMenu');
 const verifyToken = require('./verifyJWT')
 const ObjectID = require('mongodb').ObjectID;
+const { mainNav, subNavCat } = require('./validation');
+
+const { indusrtySolutionForSchema } = require('../modals/SubNav')
+const { solutionMainCategorySchema } = require('../modals/SubNav')
+const { solutionSubCategorySchema } = require('../modals/SubNav')
+const { productMainCategorySchema } = require('../modals/SubNav')
 
 // Add Main Navbar and its sub-menu items
 /*
@@ -18,6 +24,17 @@ const ObjectID = require('mongodb').ObjectID;
 */
 router.post('/add/menu', verifyToken, async (req, res, next) => {
     try {
+
+        // Validate Input Body
+        const { error } = mainNav(req.body);
+        if (error) return res.status(200).json({ status: false, message: error.details[0].message });
+
+
+        // Check if Alreay Exists
+        const alreadyExists = await Navbar.findOne({ name: req.body.name })
+        if (alreadyExists) return res.status(200).json({ status: false, message: `${req.body.name} already exists` })
+
+        // Add New Row
         const navbar = new Navbar({
             name: req.body.name,
         })
@@ -115,20 +132,17 @@ router.put('/update/menu/:id', verifyToken, async (req, res, next) => {
 
 
 
-const { indusrtySolutionForSchema } = require('../modals/SubNav')
-const { solutionMainCategorySchema } = require('../modals/SubNav')
-const { solutionSubCategorySchema } = require('../modals/SubNav')
-const { productMainCategorySchema } = require('../modals/SubNav')
+
 router.get('/subnav', async (req, res, next) => {
     let data = [];
     let main = await indusrtySolutionForSchema.find()
 
     data.push(main)
-    main.map(async (item, index) =>{
+    main.map(async (item, index) => {
         // main[index].push('a')
         console.log(main[index])
     })
-        
+
 
     await Promise.all(main.map(async (item) => {
         const sub_main = await solutionMainCategorySchema.find({ parentId: ObjectID(item._id) })
@@ -137,20 +151,144 @@ router.get('/subnav', async (req, res, next) => {
 
         await Promise.all(sub_main.map(async item1 => {
             const sub_sub_main = await solutionSubCategorySchema.find({ parentId: ObjectID(item1._id) })
-            
+
             sub_main.push(sub_sub_main)
 
             await Promise.all(sub_sub_main.map(async item2 => {
                 const sub_sub_sub_main = await productMainCategorySchema.find({ parentId: ObjectID(item2._id) })
                 // sub_sub_main.push({productMainCategoryName : item2.name, data: sub_sub_sub_main})
                 sub_sub_main.push(sub_sub_sub_main)
-            } ))
+            }))
         }))
     }))
 
     res.send(data)
 })
 
+
+// Add Industry Solution for
+router.post('/add/industry-solution-for', verifyToken, async (req, res, next) => {
+    try {
+        // Validate Input Body
+        const { error } = mainNav(req.body);
+        if (error) return res.status(200).json({ status: false, message: error.details[0].message });
+
+        // Check if already Exists
+        let alreadyExists = await indusrtySolutionForSchema.findOne({ name: req.body.name })
+        if (alreadyExists) return res.status(200).json({ status: false, message: `${req.body.name} already exists` })
+
+
+        // Add New Row
+        const industry_solution_for = new indusrtySolutionForSchema({
+            name: req.body.name,
+        })
+
+        try {
+            let data = await industry_solution_for.save();
+            return res.status(200).json({ status: true, message: "Added Successful", data: data })
+        } catch (err) {
+            console.log(err)
+            return res.status(200).json({ status: false, error: err.message })
+        }
+
+    } catch (error) {
+        return res.status(200).json({ status: false, error: error.message })
+    }
+})
+
+
+// Add solution_main_category
+router.post('/add/solution-main-category/:id', verifyToken, async (req, res, next) => {
+    try {
+        // Validate Input Body
+        const { error } = subNavCat(req.body);
+        if (error) return res.status(200).json({ status: false, message: error.details[0].message });
+
+        // Check if already Exists
+        let alreadyExists = await solutionMainCategorySchema.findOne({ name: req.body.name, parentId: ObjectID(req.params.id) })
+        if (alreadyExists) return res.status(200).json({ status: false, message: `${req.body.name} already exists` })
+
+
+        // Add New Row
+        const solution_main_category = new solutionMainCategorySchema({
+            name: req.body.name,
+            parentId: req.params.id
+        })
+
+        try {
+            let data = await solution_main_category.save();
+            return res.status(200).json({ status: true, message: "Added Successful", data: data })
+        } catch (err) {
+            console.log(err)
+            return res.status(200).json({ status: false, error: err.message })
+        }
+
+    } catch (error) {
+        return res.status(200).json({ status: false, error: error.message })
+    }
+})
+
+// Add solution_sub_category
+router.post('/add/solution-sub-category/:id', verifyToken, async (req, res, next) => {
+    try {
+        // Validate Input Body
+        const { error } = subNavCat(req.body);
+        if (error) return res.status(200).json({ status: false, message: error.details[0].message });
+
+        // Check if already Exists
+        let alreadyExists = await solutionSubCategorySchema.findOne({ name: req.body.name, parentId: ObjectID(req.params.id) })
+        if (alreadyExists) return res.status(200).json({ status: false, message: `${req.body.name} already exists` })
+
+
+        // Add New Row
+        const solution_sub_category = new solutionSubCategorySchema({
+            name: req.body.name,
+            parentId: req.params.id
+        })
+
+        try {
+            let data = await solution_sub_category.save();
+            return res.status(200).json({ status: true, message: "Added Successful", data: data })
+        } catch (err) {
+            console.log(err)
+            return res.status(200).json({ status: false, error: err.message })
+        }
+
+    } catch (error) {
+        return res.status(200).json({ status: false, error: error.message })
+    }
+})
+
+// Add product_main_category
+router.post('/add/product-main-category/:id', verifyToken, async (req, res, next) => {
+    try {
+        // Validate Input Body
+        const { error } = subNavCat(req.body);
+        if (error) return res.status(200).json({ status: false, message: error.details[0].message });
+
+        // Check if already Exists
+        let alreadyExists = await productMainCategorySchema.findOne({ name: req.body.name, parentId: ObjectID(req.params.id) })
+        if (alreadyExists) return res.status(200).json({ status: false, message: `${req.body.name} already exists` })
+
+
+        // Add New Row
+        const product_main_category = new productMainCategorySchema({
+            name: req.body.name,
+            parentId: req.params.id
+        })
+
+        try {
+            let data = await product_main_category.save();
+            return res.status(200).json({ status: true, message: "Added Successful", data: data })
+        } catch (err) {
+            console.log(err)
+            return res.status(200).json({ status: false, error: err.message })
+        }
+
+    } catch (error) {
+        return res.status(200).json({ status: false, error: error.message })
+    }
+})
 
 module.exports = router;
 
