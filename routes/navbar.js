@@ -196,6 +196,16 @@ router.post('/add/industry-solution-for', verifyToken, async (req, res, next) =>
     }
 })
 
+router.get('/industry-solution-for', async (req, res, next) => {
+    try {
+        let main = await indusrtySolutionForSchema.find()
+
+        return res.status(200).json({ status: true, message: "success", data: main })
+    } catch (error) {
+        return res.status(200).json({ status: false, error: error.message })
+    }
+})
+
 
 // Add solution_main_category
 router.post('/add/solution-main-category/:id', verifyToken, async (req, res, next) => {
