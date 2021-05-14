@@ -4,7 +4,7 @@ const SubMenu = require('../modals/SubMenu');
 const verifyToken = require('./verifyJWT')
 const ObjectID = require('mongodb').ObjectID;
 const { mainNav, subNavCat } = require('./validation');
-
+const mongoose = require('mongoose');
 const { indusrtySolutionForSchema } = require('../modals/SubNav')
 const { solutionMainCategorySchema } = require('../modals/SubNav')
 const { solutionSubCategorySchema } = require('../modals/SubNav')
@@ -74,7 +74,7 @@ router.post('/add/menu', verifyToken, async (req, res, next) => {
 })
 
 // Get MAIN NavBar
-/*
+/*  
     *required: headers: {
         auth-token: "AUTH ACCESS TOKEN"
     }
@@ -130,25 +130,85 @@ router.put('/update/menu/:id', verifyToken, async (req, res, next) => {
 
 })
 
+// Update Sub-Menu
+/*
+    *required: ID in URL
+    {
+        "name" : "Name"
+    }
+*/
+
+router.put('/update/submenu/:id', verifyToken, async (req, res, next) => {
+    console.log('called')
+    try {
+        // Check if Entity Exists
+        const subMenuItemExists = await SubMenu.findOne({ _id: ObjectID(req.params.id) })
+        if (!subMenuItemExists) return res.status(200).json({ status: false, message: `Item Not Found` })
+
+        let data = await SubMenu.findByIdAndUpdate({ _id: ObjectID(req.params.id) }, {
+            $set: {
+                name: req.body.name
+            }
+        }, { upsert: true }).then(resp => {
+            return res.status(200).json({ status: true, message: "Updated!" })
+        }).catch(error => {
+            return res.status(200).json({ status: false, error: error.message })
+        })
+    } catch (error) {
+        return res.status(200).json({ status: false, error: error.message })
+    }
+
+})
 
 
+
+
+// router.get('/subnav', async (req, res, next) => {
+//     let data = [];
+//     let main = await indusrtySolutionForSchema.find()
+
+//     data.push(main)
+//     main.map(async (item, index) => {
+//         // main[index].push('a')
+//         console.log(main[index])
+//     })
+
+
+//     await Promise.all(main.map(async (item) => {
+//         const sub_main = await solutionMainCategorySchema.find({ parentId: ObjectID(item._id) })
+//         // console.log(d)
+//         main.push(sub_main)
+
+//         await Promise.all(sub_main.map(async item1 => {
+//             const sub_sub_main = await solutionSubCategorySchema.find({ parentId: ObjectID(item1._id) })
+
+//             sub_main.push(sub_sub_main)
+
+//             await Promise.all(sub_sub_main.map(async item2 => {
+//                 const sub_sub_sub_main = await productMainCategorySchema.find({ parentId: ObjectID(item2._id) })
+//                 // sub_sub_main.push({productMainCategoryName : item2.name, data: sub_sub_sub_main})
+//                 sub_sub_main.push(sub_sub_sub_main)
+//             }))
+//         }))
+//     }))
+
+//     res.send(data)
+// })
 
 router.get('/subnav', async (req, res, next) => {
+    // let main = await indusrtySolutionForSchema.find()
     let data = [];
-    let main = await indusrtySolutionForSchema.find()
 
-    data.push(main)
-    main.map(async (item, index) => {
-        // main[index].push('a')
-        console.log(main[index])
-    })
+    let main = await indusrtySolutionForSchema.find({ _id: ObjectID('6094d5838c327c48807489c2') });
+
+    data.push(main);
+
 
 
     await Promise.all(main.map(async (item) => {
         const sub_main = await solutionMainCategorySchema.find({ parentId: ObjectID(item._id) })
         // console.log(d)
-        main.push(sub_main)
-
+        data.push(sub_main)
         await Promise.all(sub_main.map(async item1 => {
             const sub_sub_main = await solutionSubCategorySchema.find({ parentId: ObjectID(item1._id) })
 
@@ -160,9 +220,11 @@ router.get('/subnav', async (req, res, next) => {
                 sub_sub_main.push(sub_sub_sub_main)
             }))
         }))
+
     }))
 
-    res.send(data)
+
+    res.status(200).json(data)
 })
 
 
@@ -196,15 +258,6 @@ router.post('/add/industry-solution-for', verifyToken, async (req, res, next) =>
     }
 })
 
-router.get('/industry-solution-for', async (req, res, next) => {
-    try {
-        let main = await indusrtySolutionForSchema.find()
-
-        return res.status(200).json({ status: true, message: "success", data: main })
-    } catch (error) {
-        return res.status(200).json({ status: false, error: error.message })
-    }
-})
 
 
 // Add solution_main_category
@@ -295,6 +348,46 @@ router.post('/add/product-main-category/:id', verifyToken, async (req, res, next
             return res.status(200).json({ status: false, error: err.message })
         }
 
+    } catch (error) {
+        return res.status(200).json({ status: false, error: error.message })
+    }
+})
+
+router.get('/industry-solution-for', async (req, res, next) => {
+    try {
+        let main = await indusrtySolutionForSchema.find()
+
+        return res.status(200).json({ status: true, message: "success", data: main })
+    } catch (error) {
+        return res.status(200).json({ status: false, error: error.message })
+    }
+})
+
+router.get('/solution-main-category/:id', async(req, res, next) => {
+    try {
+        let data = await solutionMainCategorySchema.find({ parentId: ObjectID(req.params.id) })
+
+        return res.status(200).json({ status: true, message: "success", data: data })
+    } catch (error) {
+        return res.status(200).json({ status: false, error: error.message })
+    }
+})
+
+router.get('/solution-sub-category/:id', async(req, res, next) => {
+    try {
+        let data = await solutionSubCategorySchema.find({ parentId: ObjectID(req.params.id) })
+
+        return res.status(200).json({ status: true, message: "success", data: data })
+    } catch (error) {
+        return res.status(200).json({ status: false, error: error.message })
+    }
+})
+
+router.get('/product-main-category/:id', async(req, res, next) => {
+    try {
+        let data = await productMainCategorySchema.find({ parentId: ObjectID(req.params.id) })
+
+        return res.status(200).json({ status: true, message: "success", data: data })
     } catch (error) {
         return res.status(200).json({ status: false, error: error.message })
     }
