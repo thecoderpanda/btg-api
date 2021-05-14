@@ -91,7 +91,8 @@ router.get('/', async (req, res, next) => {
                 }
             }
         ]).then(resp => {
-            res.send(resp);
+            // res.send(resp);
+            res.status(200).json({ status: true, message: "success", data: resp })
         }).catch(error => {
             res.send(error)
         })
