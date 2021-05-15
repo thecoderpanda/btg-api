@@ -354,6 +354,8 @@ router.post('/add/product-main-category/:id', verifyToken, async (req, res, next
     }
 })
 
+
+// GET Indurstry Solution For
 router.get('/industry-solution-for', async (req, res, next) => {
     try {
         let main = await indusrtySolutionForSchema.find()
@@ -364,7 +366,8 @@ router.get('/industry-solution-for', async (req, res, next) => {
     }
 })
 
-router.get('/solution-main-category/:id', async(req, res, next) => {
+// GET Solution Main Category
+router.get('/solution-main-category/:id', async (req, res, next) => {
     try {
         let data = await solutionMainCategorySchema.find({ parentId: ObjectID(req.params.id) })
 
@@ -374,7 +377,8 @@ router.get('/solution-main-category/:id', async(req, res, next) => {
     }
 })
 
-router.get('/solution-sub-category/:id', async(req, res, next) => {
+// GET Solution SUB Category
+router.get('/solution-sub-category/:id', async (req, res, next) => {
     try {
         let data = await solutionSubCategorySchema.find({ parentId: ObjectID(req.params.id) })
 
@@ -384,7 +388,8 @@ router.get('/solution-sub-category/:id', async(req, res, next) => {
     }
 })
 
-router.get('/product-main-category/:id', async(req, res, next) => {
+// GET Solution Procduct Main Category
+router.get('/product-main-category/:id', async (req, res, next) => {
     try {
         let data = await productMainCategorySchema.find({ parentId: ObjectID(req.params.id) })
 
@@ -393,6 +398,134 @@ router.get('/product-main-category/:id', async(req, res, next) => {
         return res.status(200).json({ status: false, error: error.message })
     }
 })
+
+// Update Industry Solution For
+/*
+    Headers: auth-token
+    body:   {
+        "name": "Pulp"
+    }
+*/
+router.put('/update/industry-solution-for/:id', verifyToken, async (req, res, next) => {
+
+    try {
+        const { error } = mainNav(req.body);
+        if (error) return res.status(200).json({ status: false, message: error.details[0].message });
+        // Check if Entity Exists
+        const ItemExists = await indusrtySolutionForSchema.findOne({ _id: ObjectID(req.params.id) })
+        if (!ItemExists) return res.status(200).json({ status: false, message: `Item Not Found` })
+
+        let data = await indusrtySolutionForSchema.findByIdAndUpdate({ _id: ObjectID(req.params.id) }, {
+            $set: {
+                name: req.body.name
+            }
+        }, { upsert: true }).then(resp => {
+            return res.status(200).json({ status: true, message: "Updated!" })
+        }).catch(error => {
+            return res.status(200).json({ status: false, error: error.message })
+        })
+    } catch (error) {
+        return res.status(200).json({ status: false, error: error.message })
+    }
+
+})
+
+// Update Solution Main Category
+/*
+    Headers: auth-token
+    body:   {
+        "name": "Pulp"
+    }
+*/
+router.put('/update/solution-main-category/:id', verifyToken, async (req, res, next) => {
+
+    try {
+        const { error } = mainNav(req.body);
+        if (error) return res.status(200).json({ status: false, message: error.details[0].message });
+        // Check if Entity Exists
+        const ItemExists = await solutionMainCategorySchema.findOne({ _id: ObjectID(req.params.id) })
+        if (!ItemExists) return res.status(200).json({ status: false, message: `Item Not Found` })
+
+        let data = await solutionMainCategorySchema.findByIdAndUpdate({ _id: ObjectID(req.params.id) }, {
+            $set: {
+                name: req.body.name
+            }
+        }, { upsert: true }).then(resp => {
+            return res.status(200).json({ status: true, message: "Updated!" })
+        }).catch(error => {
+            return res.status(200).json({ status: false, error: error.message })
+        })
+    } catch (error) {
+        return res.status(200).json({ status: false, error: error.message })
+    }
+
+})
+
+// Update Solution Sub Category
+/*
+    Headers: auth-token
+    body:   {
+        "name": "Pulp"
+    }
+*/
+router.put('/update/solution-sub-category/:id', verifyToken, async (req, res, next) => {
+
+    try {
+        const { error } = mainNav(req.body);
+        if (error) return res.status(200).json({ status: false, message: error.details[0].message });
+        // Check if Entity Exists
+        const ItemExists = await solutionSubCategorySchema.findOne({ _id: ObjectID(req.params.id) })
+        if (!ItemExists) return res.status(200).json({ status: false, message: `Item Not Found` })
+
+        let data = await solutionSubCategorySchema.findByIdAndUpdate({ _id: ObjectID(req.params.id) }, {
+            $set: {
+                name: req.body.name
+            }
+        }, { upsert: true }).then(resp => {
+            return res.status(200).json({ status: true, message: "Updated!" })
+        }).catch(error => {
+            return res.status(200).json({ status: false, error: error.message })
+        })
+    } catch (error) {
+        return res.status(200).json({ status: false, error: error.message })
+    }
+
+})
+
+// Update Product Main Category
+/*
+    Headers: auth-token
+    body:   {
+        "name": "Pulp"
+    }
+*/
+router.put('/update/product-main-category/:id', verifyToken, async (req, res, next) => {
+
+    try {
+        const { error } = mainNav(req.body);
+        if (error) return res.status(200).json({ status: false, message: error.details[0].message });
+        // Check if Entity Exists
+        const ItemExists = await productMainCategorySchema.findOne({ _id: ObjectID(req.params.id) })
+        if (!ItemExists) return res.status(200).json({ status: false, message: `Item Not Found` })
+
+        let data = await productMainCategorySchema.findByIdAndUpdate({ _id: ObjectID(req.params.id) }, {
+            $set: {
+                name: req.body.name
+            }
+        }, { upsert: true }).then(resp => {
+            return res.status(200).json({ status: true, message: "Updated!" })
+        }).catch(error => {
+            return res.status(200).json({ status: false, error: error.message })
+        })
+    } catch (error) {
+        return res.status(200).json({ status: false, error: error.message })
+    }
+
+})
+
+
+
+
 
 module.exports = router;
 
