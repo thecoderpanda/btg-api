@@ -525,8 +525,93 @@ router.put('/update/product-main-category/:id', verifyToken, async (req, res, ne
 
 
 
+// Delete solution-main-category
+router.delete('/solution-main-category/:id', verifyToken, async (req, res, next) => {
 
+    try {
+        // Check if already Exists
+        let alreadyExists = await solutionMainCategorySchema.findOne({ _id: ObjectID(req.params.id) })
+        if (!alreadyExists) return res.status(200).json({ status: false, message: `Item does not exists` })
 
+        solutionMainCategorySchema.findByIdAndDelete({ _id: ObjectID(req.params.id) })
+        .then(resp => {
+            return res.status(200).json({ status: true, message: "Deleted" })
+        })
+        .catch(error => {
+            return res.status(200).json({ status: false, error: error.message })
+        })
+
+    } catch (error) {
+        return res.status(200).json({ status: false, error: error.message })
+    }
+
+})
+
+// Delete Industry Solution For 
+router.delete('/industry-solution-for/:id', verifyToken, async (req, res, next) => {
+
+    try {
+        // Check if already Exists
+        let alreadyExists = await indusrtySolutionForSchema.findOne({ _id: ObjectID(req.params.id) })
+        if (!alreadyExists) return res.status(200).json({ status: false, message: `Item does not exists` })
+
+        indusrtySolutionForSchema.findByIdAndDelete({ _id: ObjectID(req.params.id) })
+        .then(resp => {
+            return res.status(200).json({ status: true, message: "Deleted" })
+        })
+        .catch(error => {
+            return res.status(200).json({ status: false, error: error.message })
+        })
+
+    } catch (error) {
+        return res.status(200).json({ status: false, error: error.message })
+    }
+
+})
+
+// Delete solution-sub-category
+router.delete('/solution-sub-category/:id', verifyToken, async (req, res, next) => {
+
+    try {
+        // Check if already Exists
+        let alreadyExists = await solutionSubCategorySchema.findOne({ _id: ObjectID(req.params.id) })
+        if (!alreadyExists) return res.status(200).json({ status: false, message: `Item does not exists` })
+
+        solutionSubCategorySchema.findByIdAndDelete({ _id: ObjectID(req.params.id) })
+        .then(resp => {
+            return res.status(200).json({ status: true, message: "Deleted" })
+        })
+        .catch(error => {
+            return res.status(200).json({ status: false, error: error.message })
+        })
+
+    } catch (error) {
+        return res.status(200).json({ status: false, error: error.message })
+    }
+
+})
+
+// Delete solution-sub-category
+router.delete('/product-main-category/:id', verifyToken, async (req, res, next) => {
+
+    try {
+        // Check if already Exists
+        let alreadyExists = await productMainCategorySchema.findOne({ _id: ObjectID(req.params.id) })
+        if (!alreadyExists) return res.status(200).json({ status: false, message: `Item does not exists` })
+
+        productMainCategorySchema.findByIdAndDelete({ _id: ObjectID(req.params.id) })
+        .then(resp => {
+            return res.status(200).json({ status: true, message: "Deleted" })
+        })
+        .catch(error => {
+            return res.status(200).json({ status: false, error: error.message })
+        })
+
+    } catch (error) {
+        return res.status(200).json({ status: false, error: error.message })
+    }
+
+})
 module.exports = router;
 
 /*
