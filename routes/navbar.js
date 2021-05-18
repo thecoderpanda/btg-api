@@ -525,28 +525,6 @@ router.put('/update/product-main-category/:id', verifyToken, async (req, res, ne
 
 
 
-// Delete solution-main-category
-router.delete('/solution-main-category/:id', verifyToken, async (req, res, next) => {
-
-    try {
-        // Check if already Exists
-        let alreadyExists = await solutionMainCategorySchema.findOne({ _id: ObjectID(req.params.id) })
-        if (!alreadyExists) return res.status(200).json({ status: false, message: `Item does not exists` })
-
-        solutionMainCategorySchema.findByIdAndDelete({ _id: ObjectID(req.params.id) })
-        .then(resp => {
-            return res.status(200).json({ status: true, message: "Deleted" })
-        })
-        .catch(error => {
-            return res.status(200).json({ status: false, error: error.message })
-        })
-
-    } catch (error) {
-        return res.status(200).json({ status: false, error: error.message })
-    }
-
-})
-
 // Delete Industry Solution For 
 router.delete('/industry-solution-for/:id', verifyToken, async (req, res, next) => {
 
@@ -555,21 +533,67 @@ router.delete('/industry-solution-for/:id', verifyToken, async (req, res, next) 
         let alreadyExists = await indusrtySolutionForSchema.findOne({ _id: ObjectID(req.params.id) })
         if (!alreadyExists) return res.status(200).json({ status: false, message: `Item does not exists` })
 
-        indusrtySolutionForSchema.findByIdAndDelete({ _id: ObjectID(req.params.id) })
-        .then(resp => {
-            return res.status(200).json({ status: true, message: "Deleted" })
-        })
-        .catch(error => {
+        var solutionMainCategory = await getSolutionMainCategory(req.params.id);
+        var solutionSubCategory = await getSolutionSubCategory(solutionMainCategory);
+        var productMainCategory = await getProductsMainCategory(solutionSubCategory);
+
+        let gen = await deleteSubNavElement(solutionMainCategory, solutionSubCategory, productMainCategory);
+
+        while (true) {
+
+            if (gen.next().value !== undefined)
+                console.log("called")
+            else if (gen.next().value === undefined)
+                break;
+        }
+
+        indusrtySolutionForSchema.findByIdAndDelete({ _id: ObjectID(req.params.id) }).then(resp => {
+            return res.status(200).json({ status: true, message: "Deleted!" })
+        }).catch(error => {
             return res.status(200).json({ status: false, error: error.message })
         })
-
     } catch (error) {
         return res.status(200).json({ status: false, error: error.message })
     }
 
+
 })
 
-// Delete solution-sub-category
+// Delete Solution Main For 
+router.delete('/solution-main-category/:id', verifyToken, async (req, res, next) => {
+
+    try {
+        // Check if already Exists
+        let alreadyExists = await solutionMainCategorySchema.findOne({ _id: ObjectID(req.params.id) })
+        if (!alreadyExists) return res.status(200).json({ status: false, message: `Item does not exists` })
+
+        var solutionMainCategory = [];
+        var solutionSubCategory = await getSolutionSubCategory(alreadyExists);
+        var productMainCategory = await getProductsMainCategory(solutionSubCategory);
+
+        let gen = await deleteSubNavElement(solutionMainCategory, solutionSubCategory, productMainCategory);
+
+        while (true) {
+
+            if (gen.next().value !== undefined)
+                console.log("called")
+            else if (gen.next().value === undefined)
+                break;
+        }
+
+        solutionMainCategorySchema.findByIdAndDelete({ _id: ObjectID(req.params.id) }).then(resp => {
+            return res.status(200).json({ status: true, message: "Deleted!" })
+        }).catch(error => {
+            return res.status(200).json({ status: false, error: error.message })
+        })
+    } catch (error) {
+        return res.status(200).json({ status: false, error: error.message })
+    }
+
+
+})
+
+// Delete Solution Sub For 
 router.delete('/solution-sub-category/:id', verifyToken, async (req, res, next) => {
 
     try {
@@ -577,41 +601,126 @@ router.delete('/solution-sub-category/:id', verifyToken, async (req, res, next) 
         let alreadyExists = await solutionSubCategorySchema.findOne({ _id: ObjectID(req.params.id) })
         if (!alreadyExists) return res.status(200).json({ status: false, message: `Item does not exists` })
 
-        solutionSubCategorySchema.findByIdAndDelete({ _id: ObjectID(req.params.id) })
-        .then(resp => {
-            return res.status(200).json({ status: true, message: "Deleted" })
-        })
-        .catch(error => {
+        var solutionMainCategory = [];
+        var solutionSubCategory = [];
+        var productMainCategory = await getProductsMainCategory(alreadyExists);
+
+        let gen = await deleteSubNavElement(solutionMainCategory, solutionSubCategory, productMainCategory);
+
+        while (true) {
+
+            if (gen.next().value !== undefined)
+                console.log("called")
+            else if (gen.next().value === undefined)
+                break;
+        }
+
+        solutionSubCategorySchema.findByIdAndDelete({ _id: ObjectID(req.params.id) }).then(resp => {
+            return res.status(200).json({ status: true, message: "Deleted!" })
+        }).catch(error => {
             return res.status(200).json({ status: false, error: error.message })
         })
-
     } catch (error) {
         return res.status(200).json({ status: false, error: error.message })
     }
 
+
 })
 
-// Delete solution-sub-category
-router.delete('/product-main-category/:id', verifyToken, async (req, res, next) => {
-
+// Delete Product Main Category
+router.delete('product-main-category/:id', verifyToken, async (req, res, next) => {
     try {
         // Check if already Exists
         let alreadyExists = await productMainCategorySchema.findOne({ _id: ObjectID(req.params.id) })
         if (!alreadyExists) return res.status(200).json({ status: false, message: `Item does not exists` })
 
-        productMainCategorySchema.findByIdAndDelete({ _id: ObjectID(req.params.id) })
-        .then(resp => {
-            return res.status(200).json({ status: true, message: "Deleted" })
-        })
-        .catch(error => {
+        productMainCategorySchema.findByIdAndDelete({ _id: ObjectID(req.params.id) }).then(resp => {
+            return res.status(200).json({ status: true, message: "Deleted!" })
+        }).catch(error => {
             return res.status(200).json({ status: false, error: error.message })
         })
 
     } catch (error) {
         return res.status(200).json({ status: false, error: error.message })
     }
-
 })
+
+
+function* deleteSubNavElement(solutionMainCategory, solutionSubCategory, productMainCategory) {
+    if (!Array.isArray(productMainCategory[0]) || productMainCategory[0].length > 0) {
+        console.log("prod")
+        productMainCategory.forEach(elem => {
+            elem.forEach(item => {
+                // console.log(item?._id)
+
+                productMainCategorySchema.deleteOne({ _id: ObjectID(item?._id) })
+            })
+
+        })
+
+        yield true;
+    }
+
+    if (solutionSubCategory != null || solutionSubCategory != undefined) {
+        console.log("Sol Main")
+        solutionSubCategory.forEach(elem => {
+            console.log(elem?._id)
+            solutionSubCategorySchema.deleteOne({ _id: ObjectID(elem?._id) })
+        })
+        yield true;
+    }
+
+    if (solutionMainCategory != null || solutionMainCategory != undefined) {
+        console.log("Sol Sub")
+        solutionMainCategory.forEach(elem => {
+            console.log(elem?._id)
+            solutionMainCategorySchema.deleteOne({ _id: ObjectID(elem?._id) })
+        })
+        yield true;
+    }
+
+
+}
+
+async function getSolutionMainCategory(levelOneId) {
+    let data = await solutionMainCategorySchema.find({ parentId: ObjectID(levelOneId) })
+    return data;
+}
+
+async function getSolutionSubCategory(levelTwoData) {
+    let data = [];
+    await Promise.all(levelTwoData.map(async item => {
+
+        if (item != null) {
+            await solutionSubCategorySchema.findOne({ parentId: ObjectID(item._id) }).then(resp => {
+                // console.log(resp)
+                data.push(resp)
+            })
+        }
+
+    }))
+
+    return data;
+
+}
+
+async function getProductsMainCategory(levelThreeData) {
+    let data = [];
+    // console.log(levelThreeData)
+    await Promise.all(levelThreeData.map(async item => {
+
+        if (item != null) {
+            await productMainCategorySchema.find({ parentId: ObjectID(item._id) }).then(resp => {
+                // console.log(resp)
+                data.push(resp)
+            })
+        }
+    }))
+
+    return data;
+}
+
+
 module.exports = router;
 
 /*
