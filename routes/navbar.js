@@ -566,9 +566,9 @@ router.delete('/solution-main-category/:id', verifyToken, async (req, res, next)
         // Check if already Exists
         let alreadyExists = await solutionMainCategorySchema.findOne({ _id: ObjectID(req.params.id) })
         if (!alreadyExists) return res.status(200).json({ status: false, message: `Item does not exists` })
-
+        // console.log([alreadyExists])
         var solutionMainCategory = [];
-        var solutionSubCategory = await getSolutionSubCategory(alreadyExists);
+        var solutionSubCategory = await getSolutionSubCategory([alreadyExists]);
         var productMainCategory = await getProductsMainCategory(solutionSubCategory);
 
         let gen = await deleteSubNavElement(solutionMainCategory, solutionSubCategory, productMainCategory);
@@ -603,7 +603,7 @@ router.delete('/solution-sub-category/:id', verifyToken, async (req, res, next) 
 
         var solutionMainCategory = [];
         var solutionSubCategory = [];
-        var productMainCategory = await getProductsMainCategory(alreadyExists);
+        var productMainCategory = await getProductsMainCategory([alreadyExists]);
 
         let gen = await deleteSubNavElement(solutionMainCategory, solutionSubCategory, productMainCategory);
 
