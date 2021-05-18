@@ -628,7 +628,7 @@ router.delete('/solution-sub-category/:id', verifyToken, async (req, res, next) 
 })
 
 // Delete Product Main Category
-router.delete('product-main-category/:id', verifyToken, async (req, res, next) => {
+router.delete('/product-main-category/:id', verifyToken, async (req, res, next) => {
     try {
         // Check if already Exists
         let alreadyExists = await productMainCategorySchema.findOne({ _id: ObjectID(req.params.id) })
