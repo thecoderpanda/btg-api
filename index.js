@@ -35,9 +35,11 @@ app.get('/', (req, res) => {
 
 const authAdmin = require('./routes/authAdmin'); 
 const navbar = require('./routes/navbar')
+const product = require('./routes/products')
 
 app.use('/api/auth', authAdmin)
 app.use('/api/navbar', navbar)
+app.use('/api/product', product)
 
 
 // Server Configuration
