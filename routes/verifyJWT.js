@@ -13,6 +13,6 @@ module.exports = function(req, res, next) {
         req.admin = verified;
         next();
     } catch(err){
-        res.status(200).json({status: false,message : 'Invalid Token'})
+        res.status(200).json({status: false,message : 'Invalid Token', error: err})
     }
 }
