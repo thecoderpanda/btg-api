@@ -70,7 +70,7 @@ router.get('/admins', verifyToken, async (req, res, next) => {
 
 router.get('/admins/:id', verifyToken, async (req, res, next) => {
     try {
-        const admins = await Admin.findOne({ id: ObjectID(req.params.id) })
+        const admins = await Admin.findOne({ _id: ObjectID(req.params.id) })
 
         res.status(200).json({ status: true, data: admins, message: "success" })
 
