@@ -3,7 +3,7 @@ const Admin = require('../modals/Admin');
 const { adminRegister, adminLogin } = require('./validation');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-
+const verifyToken = require('./verifyJWT')
 router.get('/', (req, res, next) => {
     return res.status(200).json({
         title: "Admin Auth. Module",
@@ -11,18 +11,26 @@ router.get('/', (req, res, next) => {
     })
 })
 
-router.post('/register', async(req, res, next) => {
+/*
+    Admin Roles:
+
+    0: Super Admin - CURD Priviliges
+    1: View Only
+
+*/
+
+router.post('/register', async (req, res, next) => {
 
     // Validate Input Body
     const { error } = adminRegister(req.body);
     if (error) return res.status(200).json({ status: false, message: error.details[0].message });
 
     // Check if Email/Mobile already exists
-    
+
     const emailExists = await Admin.findOne({ email: req.body.email })
 
     if (emailExists) return res.status(200).json({ status: false, message: `${req.body.email}, This email already exists` })
-    
+
 
     // hash the password
     const salt = await bcrypt.genSalt(10);
@@ -38,31 +46,43 @@ router.post('/register', async(req, res, next) => {
 
     try {
         let userData = await user.save();
-        
+
         return res.status(200).json({ status: true, message: "Registration Successful", data: { id: user._id } })
     } catch (err) {
         console.log(err)
         return res.status(200).json({ status: false, message: err })
     }
-    
+
 })
 
-router.post('/login', async(req, res, next) => {
+router.get('/admins', verifyToken, async (req, res, next) => {
+    try {
+        const admins = await Admin.find()
+
+        res.status(200).json({ status: true, data: admins, message: "success" })
+
+    } catch (err) {
+        console.log(err)
+        return res.status(200).json({ status: false, message: err })
+    }
+})
+
+router.post('/login', async (req, res, next) => {
 
     // Validate Input Body
     const { error } = adminLogin(req.body);
     if (error) return res.status(200).json({ status: false, message: error.details[0].message });
 
     // Check if email exists
-    const emailExists = await Admin.findOne({ email : req.body.email })
+    const emailExists = await Admin.findOne({ email: req.body.email })
     if (!emailExists) return res.status(200).json({ status: false, message: 'Email not found!' })
-    
+
     // Passowrd is correct
     const validPassowrd = await bcrypt.compare(req.body.password, emailExists.password)
     if (!validPassowrd) return res.status(200).json({ status: false, message: 'Invalid Passowrd!' })
 
     // JWT ACCESS TOKEN
-    let payload = { user_id : emailExists._id }
+    let payload = { user_id: emailExists._id }
 
     //create the access token with the shorter lifespan
     let accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
@@ -81,7 +101,7 @@ router.post('/login', async(req, res, next) => {
             accessToken
         }
     })
-    
+
 })
 
 
