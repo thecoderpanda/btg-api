@@ -104,7 +104,7 @@ router.put('/manage-role/:id', verifyToken, async (req, res, next) => {
     }
 })
 
-router.put('/change-password', verifyToken, async (req, res, next) => {
+router.put('/change-password/:id', verifyToken, async (req, res, next) => {
     try {
         // Check if Entity Exists
         const existsAlready = await Admin.findOne({ _id: ObjectID(req.params.id) })
