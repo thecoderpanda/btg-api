@@ -4,6 +4,7 @@ const { adminRegister, adminLogin } = require('./validation');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const verifyToken = require('./verifyJWT')
+const ObjectID = require('mongodb').ObjectID;
 router.get('/', (req, res, next) => {
     return res.status(200).json({
         title: "Admin Auth. Module",
@@ -58,6 +59,18 @@ router.post('/register', async (req, res, next) => {
 router.get('/admins', verifyToken, async (req, res, next) => {
     try {
         const admins = await Admin.find()
+
+        res.status(200).json({ status: true, data: admins, message: "success" })
+
+    } catch (err) {
+        console.log(err)
+        return res.status(200).json({ status: false, message: err })
+    }
+})
+
+router.get('/admins/:id', verifyToken, async (req, res, next) => {
+    try {
+        const admins = await Admin.findOne({ id: ObjectID(req.params.id) })
 
         res.status(200).json({ status: true, data: admins, message: "success" })
 
