@@ -80,6 +80,30 @@ router.get('/admins/:id', verifyToken, async (req, res, next) => {
     }
 })
 
+router.put('/manage-role/:id', verifyToken, async (req, res, next) => {
+    try {
+        // Check if Entity Exists
+        const existsAlready = await Admin.findOne({ _id: ObjectID(req.params.id) })
+        if (!existsAlready) return res.status(200).json({ status: false, message: `Item Not Found` })
+
+        let data = await Admin.findByIdAndUpdate({ _id: ObjectID(req.params.id) }, {
+            $set: {
+                name: req.body.name,
+                role: req.body.role
+            }
+        }, { upsert: true }).then(resp => {
+            return res.status(200).json({ status: true, message: "Updated!" })
+        }).catch(error => {
+            return res.status(200).json({ status: false, error: error.message })
+        })
+
+
+    } catch (err) {
+        console.log(err)
+        return res.status(200).json({ status: false, message: err })
+    }
+})
+
 router.post('/login', async (req, res, next) => {
 
     // Validate Input Body
