@@ -75,6 +75,7 @@ router.post('/login', async(req, res, next) => {
         message: 'Login Successful',
         data: {
             id: emailExists._id,
+            role: emailExists.role,
             name: emailExists.name,
             email: emailExists.email,
             accessToken
