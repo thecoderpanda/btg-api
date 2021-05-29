@@ -38,4 +38,16 @@ router.post('/add/:id', verifyToken, async (req, res, next) => {
 });
 
 
+router.get('/get/:id', async (req, res, next) => {
+    try {
+        const data = await Products.findOne({ parentId: ObjectID(req.params.id) });
+
+        return res.status(200).json({ status: true, message: "success", data })
+
+    } catch (err) {
+        console.log(err)
+        return res.status(200).json({ status: false, error: err.message })
+    }
+})
+
 module.exports = router;
