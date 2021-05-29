@@ -2,7 +2,7 @@ const router = require('express').Router();
 const verifyToken = require('./verifyJWT');
 const ObjectID = require('mongodb').ObjectID;
 const mongoose = require('mongoose');
-const Products = require('../modals/Procuts');
+const Products = require('../modals/Products');
 
 router.post('/add/:id', verifyToken, async (req, res, next) => {
     try {
