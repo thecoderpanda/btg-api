@@ -10,7 +10,7 @@ module.exports = function(req, res, next) {
         return res.status(200).json({status: false,message : 'Access Denied!'})
     }
 
-    if(role != 0 || role != 1){
+    if(role == 2){
         return res.status(200).json({status: false,message : 'You are not authorized to perform this task!'})
     }
 
