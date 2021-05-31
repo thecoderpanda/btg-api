@@ -14,7 +14,7 @@ router.post('/add/:id', verifyToken, async (req, res, next) => {
             parentId: req.params.id,
             heading: req.body.heading,
             subHeadingOne: req.body.subHeadingOne,
-            descriptionOne: req.body.heading,
+            descriptionOne: req.body.descriptionOne,
             subHeadingTwo: req.body.subHeadingTwo,
             descriptionTwo: req.body.descriptionTwo,
             subHeadingThree: req.body.subHeadingThree,
