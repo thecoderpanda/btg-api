@@ -16,7 +16,8 @@ router.get('/', (req, res, next) => {
     Admin Roles:
 
     0: Super Admin - CURD Priviliges
-    1: View Only
+    1: Mid Privilegs
+    2: View Only
 
 */
 
