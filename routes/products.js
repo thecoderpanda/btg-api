@@ -15,32 +15,10 @@ var cpUpload = upload.fields([{ name: 'productImage', maxCount: 1 }, { name: 'da
 router.post('/add/:id', verifyToken, cpUpload, async (req, res, next) => {
     try {
         // Check if Alreay Exists
-        // const alreadyExists = await Products.findOne({ parentId : ObjectID(req.params.id) })
-        // if (alreadyExists) return res.status(200).json({ status: false, message: `${req.body.heading} already exists` })
-        console.log(req.files)
-        return res.json(req.body)
+        const alreadyExists = await Products.findOne({ parentId : ObjectID(req.params.id) })
+        if (!alreadyExists) return res.status(200).json({ status: false, message: `${req.body.heading} doesn't exists` })
 
-        const product = new Products({
-            parentId: req.params.id,
-            heading: req.body.heading,
-            subHeadingOne: req.body.subHeadingOne,
-            descriptionOne: req.body.descriptionOne,
-            subHeadingTwo: req.body.subHeadingTwo,
-            descriptionTwo: req.body.descriptionTwo,
-            subHeadingThree: req.body.subHeadingThree,
-            descriptionThree: req.body.descriptionThree,
-            productImage: req.body.productImage,
-            productSheetSubHeading: req.body.productSheetSubHeading,
-        })
-
-        try {
-            let productData = await product.save();
-            return res.status(200).json({ status: true, message: "Added Successful", data: productData })
-        } catch (err) {
-            console.log(err)
-            return res.status(200).json({ status: false, error: err.message })
-        }
-
+        
     } catch (err) {
         console.log(err)
         return res.status(200).json({ status: false, error: err.message })
