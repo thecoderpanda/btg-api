@@ -651,6 +651,10 @@ router.delete('/product-main-category/:id', verifyToken, async (req, res, next) 
         if (!alreadyExists) return res.status(200).json({ status: false, message: `Item does not exists` })
 
         productMainCategorySchema.findByIdAndDelete({ _id: ObjectID(req.params.id) }).then(resp => {
+
+            Products.findOneAndDelete({ parentId: ObjectID(req.params.id) }).then(respp => {
+                console.log('deleted page')
+            })
             return res.status(200).json({ status: true, message: "Deleted!" })
         }).catch(error => {
             return res.status(200).json({ status: false, error: error.message })
