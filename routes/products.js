@@ -18,8 +18,9 @@ router.put('/:id', verifyToken, cpUpload, async (req, res, next) => {
         const alreadyExists = await Products.findOne({ parentId: ObjectID(req.params.id) })
         if (!alreadyExists) return res.status(200).json({ status: false, message: `${req.body.heading} doesn't exists` })
 
-        let data = await Products.findByIdAndUpdate({ parentId: ObjectID(req.params.id) }, {
+        let data = await Products.findOneAndUpdate({ parentId: ObjectID(req.params.id) }, {
             $set: {
+                parentId: req.params.id,
                 heading: req.body.heading,
                 subHeadingOne: req.body.subHeadingOne,
                 descriptionOne: req.body.descriptionOne,
