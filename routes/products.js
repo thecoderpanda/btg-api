@@ -12,12 +12,29 @@ const upload = multer({
 });
 
 var cpUpload = upload.fields([{ name: 'productImage', maxCount: 1 }, { name: 'dataSheets', maxCount: 8 }])
-router.post('/add/:id', verifyToken, cpUpload, async (req, res, next) => {
+router.put('/:id', verifyToken, cpUpload, async (req, res, next) => {
     try {
         // Check if Alreay Exists
-        const alreadyExists = await Products.findOne({ parentId : ObjectID(req.params.id) })
+        const alreadyExists = await Products.findOne({ parentId: ObjectID(req.params.id) })
         if (!alreadyExists) return res.status(200).json({ status: false, message: `${req.body.heading} doesn't exists` })
-        
+
+        let data = await Products.findByIdAndUpdate({ parentId: ObjectID(req.params.id) }, {
+            $set: {
+                heading: req.body.heading,
+                subHeadingOne: req.body.subHeadingOne,
+                descriptionOne: req.body.descriptionOne,
+                subHeadingTwo: req.body.subHeadingTwo,
+                descriptionTwo: req.body.descriptionTwo,
+                subHeadingThree: req.body.subHeadingThree,
+                descriptionThree: req.body.descriptionThree,
+                productImage: req.body.productImage,
+                productSheetSubHeading: req.body.productSheetSubHeading,
+            }
+        }, { upsert: true }).then(resp => {
+            return res.status(200).json({ status: true, message: "Updated!" })
+        }).catch(error => {
+            return res.status(200).json({ status: false, error: error.message })
+        })
 
     } catch (err) {
         console.log(err)
