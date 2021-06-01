@@ -3,12 +3,22 @@ const verifyToken = require('./verifyJWT');
 const ObjectID = require('mongodb').ObjectID;
 const mongoose = require('mongoose');
 const Products = require('../modals/Products');
+const multer = require('multer');
+const upload = multer({
+    storage: multer.memoryStorage(),
+    limits: {
+        fileSize: 1024 * 1024 * 1024 * 1024 * 1024
+    }
+});
 
-router.post('/add/:id', verifyToken, async (req, res, next) => {
+var cpUpload = upload.fields([{ name: 'productImage', maxCount: 1 }, { name: 'dataSheets', maxCount: 8 }])
+router.post('/add/:id', verifyToken, cpUpload, async (req, res, next) => {
     try {
         // Check if Alreay Exists
-        const alreadyExists = await Products.findOne({ name: req.body.heading })
-        if (alreadyExists) return res.status(200).json({ status: false, message: `${req.body.heading} already exists` })
+        // const alreadyExists = await Products.findOne({ parentId : ObjectID(req.params.id) })
+        // if (alreadyExists) return res.status(200).json({ status: false, message: `${req.body.heading} already exists` })
+        console.log(req.files)
+        return res.json(req.body)
 
         const product = new Products({
             parentId: req.params.id,
