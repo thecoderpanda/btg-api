@@ -344,7 +344,7 @@ router.post('/add/product-main-category/:id', verifyToken, async (req, res, next
 
         try {
             let data = await product_main_category.save();
-            const prod_data = await new Products({
+            const prod_data =  new Products({
                 parentId: data._id,
                 heading: `Enter Product Name Here...`,
                 subHeadingOne: `Sub Heading Here`,
@@ -356,6 +356,8 @@ router.post('/add/product-main-category/:id', verifyToken, async (req, res, next
                 productImage: `https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/600px-No_image_available.svg.png`,
                 productSheetSubHeading: `Lorem Ipsum is simply dummy text of the printing`,
             })
+
+            await prod_data.save();
             return res.status(200).json({ status: true, message: "Added Successful", data: data })
         } catch (err) {
             console.log(err)
