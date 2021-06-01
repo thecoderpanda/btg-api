@@ -17,8 +17,8 @@ router.post('/add/:id', verifyToken, cpUpload, async (req, res, next) => {
         // Check if Alreay Exists
         const alreadyExists = await Products.findOne({ parentId : ObjectID(req.params.id) })
         if (!alreadyExists) return res.status(200).json({ status: false, message: `${req.body.heading} doesn't exists` })
-
         
+
     } catch (err) {
         console.log(err)
         return res.status(200).json({ status: false, error: err.message })

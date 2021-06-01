@@ -36,9 +36,8 @@ const navbarSchema = new mongoose.Schema({
         required: true,
     },
     productImage: {
-        data: Buffer,
-        contentType: String,
-
+        type: String,
+        required: true,
     },
     productSheetSubHeading: {
         type: String,
