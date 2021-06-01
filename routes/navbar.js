@@ -674,6 +674,9 @@ function* deleteSubNavElement(solutionMainCategory, solutionSubCategory, product
                 // console.log(item?._id)
 
                 productMainCategorySchema.deleteOne({ _id: ObjectID(item?._id) })
+                
+                Products.findOneAndDelete({ parentId: ObjectID(item?._id) })
+
             })
 
         })
