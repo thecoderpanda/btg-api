@@ -42,7 +42,7 @@ const navbarSchema = new mongoose.Schema({
     productSheetSubHeading: {
         type: String,
     }, 
-    productDataSheets: []
+    productDataSheets: [{}]
 },
     { collection: "products" },
     { strict: false }
