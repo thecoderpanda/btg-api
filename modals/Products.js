@@ -11,38 +11,42 @@ const navbarSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    subHeadingOne: {
-        type: String,
-        required: true,
+    sectionOne:{
+        type: String
     },
-    descriptionOne: {
-        type: String,
-        required: true,
+    sectionTwo: {
+        type: String
     },
-    subHeadingTwo: {
-        type: String,
-        required: true,
+    sectionThree: {
+        type: String
     },
-    descriptionTwo: {
-        type: String,
-        required: true,
+    sectionFour: {
+        type: String
     },
-    subHeadingThree: {
-        type: String,
-        required: true,
+    sectionFive: {
+        type: String
     },
-    descriptionThree: {
-        type: String,
-        required: true,
+    sectionSix: {
+        type: String
     },
-    productImage: {
-        type: String,
-        // required: true,
+    sectionSeven: {
+        type: String
     },
-    productSheetSubHeading: {
-        type: String,
-    }, 
-    productDataSheets: [{}]
+    sectionEight: {
+        type: String
+    },
+    sectionNine: {
+        type: String
+    },
+    sectionTen: {
+        type: String
+    },
+    sectionEleven: {
+        type: String
+    },
+    sectionTwelve: {
+        type: String
+    },
 },
     { collection: "products" },
     { strict: false }

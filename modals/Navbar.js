@@ -4,6 +4,10 @@ const navbarSchema = new mongoose.Schema({
       type: String,
       required: true
    },
+   order: {
+      type: Number,
+      required: true
+   }
 }, { collection: "navbar" }
 );
 
